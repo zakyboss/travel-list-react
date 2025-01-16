@@ -7,11 +7,15 @@ const initialItems = [
   { id: 3, description: "Charger", quantity: 1, packed: true },
 ];
 function App() {
+  const [items,setItems]=useState([]);
+  function handleAddItems(item){
+    setItems((items)=>[...items,item])
+    }
   return (
     <div className='app' >
       <Logo/>
-      <Form/>
-      <PackingList/>
+      <Form onAddItems={handleAddItems}/>
+      <PackingList items={items}/>
       <Stats/>
     </div>
   );
@@ -22,17 +26,20 @@ function Logo(){
     <h1>🌴FAR AWAY 💼</h1>
   )
 }
-function Form() {
+function Form({onAddItems}) {
   const [desc , setDesc]= useState("");
 const [quantity,setQuantity]=useState(1)
+
   function handleSubmit(e){
 e.preventDefault();
 if(!desc) return
 const newItem = {desc,quantity,packed:false,id:Date.now()}
    console.log(newItem)
+   onAddItems(newItem)
    setDesc("");
    setQuantity(1)
 }
+
   return (
     <form className="add-form" onSubmit={handleSubmit}>
       <h3>What do you need for your trip 🤔</h3>
@@ -42,7 +49,7 @@ const newItem = {desc,quantity,packed:false,id:Date.now()}
        )}
       </select>
       <input type='text' placeholder='item..'  value={desc} onChange={(e)=> setDesc(e.target.value)}/>
-    <button>Add</button>
+    <button >Add</button>
     </form>
   );
 }
@@ -50,17 +57,17 @@ const newItem = {desc,quantity,packed:false,id:Date.now()}
 function Item({item}) {
   return (
     <li >
-      <span style={item.packed?{textDecoration:"line-through"}:{}}>{item.quantity} {item.description}</span>
+      <span style={item.packed?{textDecoration:"line-through"}:{}}>{item.quantity} {item.desc}</span>
       <button>❌</button>
     </li>
   );
 }
 
-function PackingList() {
+function PackingList({items}) {
   return (
     <div className="list">
       <ul>
-        {initialItems.map((item) => (
+        {items.map((item) => (
           <Item key={item.id} item={item} />
         ))}
       </ul>
